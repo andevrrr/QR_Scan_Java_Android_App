@@ -17,16 +17,17 @@ public class LocationParser {
 
     public String parseAndCalculateDistance(String geoUri) {
         Location targetLocation = parseGeoUri(geoUri);
-
         Location currentLocation = getCurrentLocation();
 
         double distance = calculateDistance(currentLocation, targetLocation);
+
+        String formattedDistance = String.format("%.2f", distance);
 
         return "Current Location: " + (currentLocation != null ? currentLocation.getLatitude() + ", " +
                 currentLocation.getLongitude() : "N/A") +
                 "\nTarget Location: " +
                 targetLocation.getLatitude() + ", " + targetLocation.getLongitude() +
-                "\nDistance: " + distance + " km";
+                "\nDistance: " + formattedDistance + " km";
     }
 
     private Location parseGeoUri(String geoUri) {

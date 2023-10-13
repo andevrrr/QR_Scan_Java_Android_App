@@ -6,13 +6,15 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button scanButton;
-
+    private Button calculateButton;
+    private EditText editTextGeoUrl;
     private static final int REQUEST_CAMERA_PERMISSION = 201;
 
     @Override
@@ -25,24 +27,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initViews() {
         scanButton = findViewById(R.id.scanButton);
         scanButton.setOnClickListener(this);
-    }
 
-//    @Override
-//    public void onClick(View v) {
-//        // For testing purposes, manually set a geo URL
-//        String geoUri = "geo:37.7749,-122.4194"; // Example geo URL for San Francisco
-//
-//        // Pass the geo URI to the LocationActivity for testing
-//        startLocationActivity(geoUri);
-//    }
+        editTextGeoUrl = findViewById(R.id.editTextGeoUrl);
+
+        calculateButton = findViewById(R.id.calculateButton);
+        calculateButton.setOnClickListener(this);
+    }
 
     @Override
     public void onClick(View v) {
-        if (checkPermissions()) {
-            startActivity(new Intent(MainActivity.this, ScanActivity.class));
-        } else {
-            requestPermissions();
+        if (v.getId() == R.id.scanButton) {
+            if (checkPermissions()) {
+                startActivity(new Intent(MainActivity.this, ScanActivity.class));
+            } else {
+                requestPermissions();
+            }
+        } else if (v.getId() == R.id.calculateButton) {
+            String geoUri = editTextGeoUrl.getText().toString();
+            startLocationActivity(geoUri);
         }
+    }
+
+    private void startLocationActivity(String geoUri) {
+        Intent intent = new Intent(MainActivity.this, LocationActivity.class);
+        intent.putExtra("geoUri", geoUri);
+        startActivity(intent);
     }
 
     private boolean checkPermissions() {
