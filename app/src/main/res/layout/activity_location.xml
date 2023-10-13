@@ -13,4 +13,16 @@
         android:padding="16dp"
         android:text="Location Details" />
 
+    <Button
+        android:id="@+id/goToMainActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="158dp"
+        android:layout_marginEnd="165dp"
+        android:layout_marginBottom="149dp"
+        android:text="Go back" />
+
 </RelativeLayout>

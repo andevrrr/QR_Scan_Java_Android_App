@@ -1,13 +1,18 @@
 // LocationActivity.java
 package com.example.final_assignment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class LocationActivity extends AppCompatActivity {
+public class LocationActivity extends AppCompatActivity implements View.OnClickListener{
     private TextView txtLocationDetails;
+
+    private Button goBackButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,14 +21,24 @@ public class LocationActivity extends AppCompatActivity {
 
         txtLocationDetails = findViewById(R.id.txtLocationDetails);
 
-        // Get geo URI from intent
         String geoUri = getIntent().getStringExtra("geoUri");
 
-        // Parse geo URI and calculate distance
         LocationParser locationParser = new LocationParser(getApplicationContext());
         String locationDetails = locationParser.parseAndCalculateDistance(geoUri);
 
-        // Display location details
         txtLocationDetails.setText(locationDetails);
+
+        initViews();
     }
+
+    private void initViews() {
+        goBackButton = findViewById(R.id.goToMainActivity);
+        goBackButton.setOnClickListener(this);
+    }
+
+    public void onClick(View v) {
+        Intent intent = new Intent(LocationActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
+
 }

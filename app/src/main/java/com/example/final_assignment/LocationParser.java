@@ -3,7 +3,10 @@ package com.example.final_assignment;
 
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
+import android.util.Log;
 
 public class LocationParser {
     private Context context;
@@ -13,18 +16,15 @@ public class LocationParser {
     }
 
     public String parseAndCalculateDistance(String geoUri) {
-        // Parse geo URI and extract latitude and longitude
         Location targetLocation = parseGeoUri(geoUri);
 
-        // Get current location
         Location currentLocation = getCurrentLocation();
 
-        // Calculate distance
         double distance = calculateDistance(currentLocation, targetLocation);
 
-        // Format and return location details
-        return "Current Location: " + currentLocation.getLatitude() + ", " +
-                currentLocation.getLongitude() + "\nTarget Location: " +
+        return "Current Location: " + (currentLocation != null ? currentLocation.getLatitude() + ", " +
+                currentLocation.getLongitude() : "N/A") +
+                "\nTarget Location: " +
                 targetLocation.getLatitude() + ", " + targetLocation.getLongitude() +
                 "\nDistance: " + distance + " km";
     }
@@ -48,12 +48,34 @@ public class LocationParser {
     }
 
     private Location getCurrentLocation() {
-        // Implement the logic to get the current location
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         try {
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (lastKnownLocation != null) {
-                return lastKnownLocation;
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        Log.d("LocationParser", "Location updated: " + location.getLatitude() + ", " + location.getLongitude());
+                    }
+
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+                    }
+
+                    @Override
+                    public void onProviderEnabled(String provider) {
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String provider) {
+                    }
+                });
+
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (lastKnownLocation != null) {
+                    return lastKnownLocation;
+                }
+            } else {
+                Log.e("LocationParser", "GPS provider not enabled");
             }
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -62,12 +84,9 @@ public class LocationParser {
     }
 
     private double calculateDistance(Location currentLocation, Location targetLocation) {
-        // Implement the logic to calculate distance between two locations
         if (currentLocation != null && targetLocation != null) {
-            return currentLocation.distanceTo(targetLocation) / 1000; // in kilometers
+            return currentLocation.distanceTo(targetLocation) / 1000; // in km
         }
         return 0;
     }
 }
-
-
